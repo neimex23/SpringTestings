@@ -27,7 +27,7 @@ public class ClienteController {
     }
 
     @GetMapping
-     @Operation(summary = "Listar Toddos los Clientes")
+     @Operation(summary = "Listar Todos los Clientes")
     public List<Cliente> listar() {
         return service.listar();
     }
