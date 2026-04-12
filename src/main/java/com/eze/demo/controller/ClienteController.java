@@ -1,7 +1,7 @@
 package com.eze.demo.controller;
 
 import com.eze.demo.entity.Cliente;
-import com.eze.demo.entity.DtoCliente;
+import com.eze.demo.entity.DTOs.DTOCliente;
 import com.eze.demo.service.ClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class ClienteController {
             @ApiResponse(responseCode = "201", description = "Cliente creado"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<Cliente> crear(@RequestBody DtoCliente cliente) {
+    public ResponseEntity<Cliente> crear(@RequestBody DTOCliente cliente) {
 
         Cliente nuevo = service.guardar(new Cliente(cliente.getNombre(),cliente.getEmail()));
 

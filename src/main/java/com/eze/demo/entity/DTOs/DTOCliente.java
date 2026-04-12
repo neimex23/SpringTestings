@@ -1,11 +1,11 @@
-package com.eze.demo.entity;
+package com.eze.demo.entity.DTOs;
 
-public class DtoCliente {
+public class DTOCliente {
 
     private String nombre;
     private String email;
     
-    public DtoCliente(String nombre, String email) {
+    public DTOCliente(String nombre, String email) {
         this.nombre = nombre;
         this.email = email;
     }
