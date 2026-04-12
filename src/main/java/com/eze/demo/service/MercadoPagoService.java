@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.eze.demo.entity.Orden;
 import com.eze.demo.entity.OrdenResponse;
+import com.eze.demo.entity.Producto;
 import com.eze.demo.entity.DTOs.DTOProducto;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
@@ -17,6 +19,12 @@ import com.mercadopago.resources.preference.Preference;
 
 @Service
 public class MercadoPagoService {
+
+    private final OrdenesService ordenesService;
+
+    public MercadoPagoService(OrdenesService ordenesService) {
+        this.ordenesService = ordenesService;
+    }
 
     public OrdenResponse crearOrden(List<DTOProducto> products) {
           
@@ -49,15 +57,24 @@ public class MercadoPagoService {
         try {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
+            
+            Orden newOrden = new Orden(
+                preference.getId(),
+                items.stream().map(item -> new Producto(
+                    item.getTitle(),
+                    item.getUnitPrice(),
+                    item.getQuantity(),
+                    item.getPictureUrl(),
+                    item.getCategoryId()
+                )).toList()
+            );
+            ordenesService.guardar(newOrden);
 
-        // Aquí se debería implementar la lógica para guardar la orden en la base de datos, asociándola con el ID de la preferencia de MercadoPago 
-        // (preference.getId()) y el estado inicial (por ejemplo, "CREADA"). Esto permitirá luego actualizar el estado de la orden cuando se reciba la notificación de pago.
-
-               return new OrdenResponse(
-                    preference.getId(),
-                    preference.getInitPoint(),
-                    preference.getSandboxInitPoint()
-                );
+            return new OrdenResponse(
+                preference.getId(),
+                preference.getInitPoint(),
+                preference.getSandboxInitPoint()
+            );
         } catch (MPApiException e) {
         throw new RuntimeException(
             "MP ERROR: " + e.getApiResponse().getContent(),
