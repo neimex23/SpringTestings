@@ -1,6 +1,6 @@
 package com.eze.demo.service;
 
-import com.eze.demo.entity.Cliente;
+import com.eze.demo.entity.PruebaConcepto.ClientePC;
 import com.eze.demo.repository.ClienteRepository;
 
 import org.springframework.http.HttpStatus;
@@ -20,15 +20,15 @@ public class ClienteService {
         this.repo = repo;
     }
 
-    public List<Cliente> listar() {
+    public List<ClientePC> listar() {
         return repo.findAll();
     }
 
-    public Cliente guardar(Cliente cliente) {
+    public ClientePC guardar(ClientePC cliente) {
         return repo.save(cliente);
     }
 
-    public Optional<Cliente> obtener(Long id) {
+    public Optional<ClientePC> obtener(Long id) {
         return repo.findById(id);
     }
 

@@ -1,4 +1,4 @@
-package com.eze.demo.entity.DTOs;
+package com.eze.demo.entity.PruebaConcepto.DTOs;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 
-public class DTOProducto {
+public class DTOProductoPC {
     
     private final String description;
     private final BigDecimal precio;
@@ -15,7 +15,7 @@ public class DTOProducto {
     private final String categoryId;
 
     @JsonCreator
-    public DTOProducto(
+    public DTOProductoPC(
             @JsonProperty("description") String description,
             @JsonProperty("precio") BigDecimal precio,
             @JsonProperty("cantidad") int cantidad,
@@ -28,7 +28,7 @@ public class DTOProducto {
         this.categoryId = categoryId;
     }
     
-    public DTOProducto() {
+    public DTOProductoPC() {
         this.description = null;
         this.precio = null;
         this.cantidad = 0;

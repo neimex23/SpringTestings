@@ -1,11 +1,11 @@
-package com.eze.demo.entity;
+package com.eze.demo.entity.PruebaConcepto;
 
-public class TestModel {
+public class TestModelPC {
      private String mensaje;
 
-    public TestModel() {} 
+    public TestModelPC() {} 
 
-    public TestModel(String mensaje) {
+    public TestModelPC(String mensaje) {
         this.mensaje = mensaje;
     }
 

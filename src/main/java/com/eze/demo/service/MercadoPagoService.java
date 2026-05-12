@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.eze.demo.entity.Orden;
-import com.eze.demo.entity.OrdenResponse;
-import com.eze.demo.entity.Producto;
-import com.eze.demo.entity.DTOs.DTOProducto;
+import com.eze.demo.entity.MPResponse;
+import com.eze.demo.entity.PruebaConcepto.OrdenPC;
+import com.eze.demo.entity.PruebaConcepto.ProductoPC;
+import com.eze.demo.entity.PruebaConcepto.DTOs.DTOProductoPC;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
@@ -26,7 +26,7 @@ public class MercadoPagoService {
         this.ordenesService = ordenesService;
     }
 
-    public OrdenResponse crearOrden(List<DTOProducto> products) {
+    public MPResponse crearOrden(List<DTOProductoPC> products) {
           
         List<PreferenceItemRequest> items = products.stream()
             .map(dto -> PreferenceItemRequest.builder()
@@ -58,9 +58,9 @@ public class MercadoPagoService {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
             
-            Orden newOrden = new Orden(
+            OrdenPC newOrden = new OrdenPC(
                 preference.getId(),
-                items.stream().map(item -> new Producto(
+                items.stream().map(item -> new ProductoPC(
                     item.getTitle(),
                     item.getUnitPrice(),
                     item.getQuantity(),
@@ -70,7 +70,7 @@ public class MercadoPagoService {
             );
             ordenesService.guardar(newOrden);
 
-            return new OrdenResponse(
+            return new MPResponse(
                 preference.getId(),
                 preference.getInitPoint(),
                 preference.getSandboxInitPoint()

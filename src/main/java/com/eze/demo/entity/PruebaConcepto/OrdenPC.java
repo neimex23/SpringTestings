@@ -1,4 +1,4 @@
-package com.eze.demo.entity;
+package com.eze.demo.entity.PruebaConcepto;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
 @Entity
-public class Orden {
+public class OrdenPC {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
@@ -17,9 +17,9 @@ public class Orden {
     private String preferenceId;
 
     @OneToMany
-    private List<Producto> productos;
+    private List<ProductoPC> productos;
 
-    public Orden(String preferenceId, List<Producto> productos) {
+    public OrdenPC(String preferenceId, List<ProductoPC> productos) {
         this.preferenceId = preferenceId;
         this.productos = productos;
     }
@@ -40,11 +40,11 @@ public class Orden {
         this.preferenceId = preferenceId;
     }
 
-    public List<Producto> getProductos() {
+    public List<ProductoPC> getProductos() {
         return productos;
     }
 
-    public void setProductos(List<Producto> productos) {
+    public void setProductos(List<ProductoPC> productos) {
         this.productos = productos;
     }
 }

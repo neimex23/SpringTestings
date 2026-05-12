@@ -1,7 +1,7 @@
 package com.eze.demo.controller;
 
-import com.eze.demo.entity.OrdenResponse;
-import com.eze.demo.entity.DTOs.DTOProducto;
+import com.eze.demo.entity.MPResponse;
+import com.eze.demo.entity.PruebaConcepto.DTOs.DTOProductoPC;
 import com.eze.demo.service.MercadoPagoService;
 import java.math.BigDecimal;
 import java.util.List;
@@ -21,7 +21,7 @@ public class OrdenController {
     }
 
     @PostMapping("/create-order")
-    public ResponseEntity<?> create(@RequestBody List<DTOProducto> products) {
+    public ResponseEntity<?> create(@RequestBody List<DTOProductoPC> products) {
         if (products == null || products.isEmpty()) {
             return ResponseEntity.badRequest().body("La lista de productos no puede estar vacía");
         }

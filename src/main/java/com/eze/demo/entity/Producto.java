@@ -1,59 +1,102 @@
 package com.eze.demo.entity;
 
-import java.math.BigDecimal;
-
 import jakarta.persistence.Entity;
-
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Producto {
-    private final String internalId = java.util.UUID.randomUUID().toString();
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Producto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idProducto;
 
-    private String description;
-    private BigDecimal precio;
-    private int cantidad;
-    private String pictureUrl;
-    private String categoryId;
+    private String nombre;
+    private float precio;
+    private String descripcion;
+    private String urlImagen;
+    private boolean ofertaActiva = false;
 
-    public Producto(String description, BigDecimal precio, int cantidad, String pictureUrl, String categoryId) {
-        this.description = description;
+    @ManyToOne
+    @JoinColumn(name = "oferta_id")
+    private Oferta oferta;
+
+    @ManyToOne
+    @JoinColumn(name = "subcategoria_id")
+    private SubCategoria subCategoria;
+
+    protected Producto() {
+    }
+
+    public Producto(String nombre, float precio, String descripcion, String urlImagen) {
+        this.nombre = nombre;
         this.precio = precio;
-        this.cantidad = cantidad;
-        this.pictureUrl = pictureUrl;
-        this.categoryId = categoryId;
+        this.descripcion = descripcion;
+        this.urlImagen = urlImagen;
     }
-    public String getDescription() {
-        return description;
+
+    public int getIdProducto() {
+        return idProducto;
     }
-    public void setDescription(String description) {
-        this.description = description;
+
+    public String getNombre() {
+        return nombre;
     }
-    public BigDecimal getPrecio() {
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public float getPrecio() {
         return precio;
     }
-    public void setPrecio(BigDecimal precio) {
+
+    public void setPrecio(float precio) {
         this.precio = precio;
     }
-    public int getCantidad() {
-        return cantidad;
-    }
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-    public String getPictureUrl() {
-        return pictureUrl;
-    }
-    public void setPictureUrl(String pictureUrl) {
-        this.pictureUrl = pictureUrl;
-    }
-    public String getCategoryId() {
-        return categoryId;
-    }
-    public void setCategoryId(String categoryId) {
-        this.categoryId = categoryId;
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
-    public String getInternalId() {
-        return internalId;
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+
+    public String getUrlImagen() {
+        return urlImagen;
+    }
+
+    public void setUrlImagen(String urlImagen) {
+        this.urlImagen = urlImagen;
+    }
+
+    public boolean isOfertaActiva() {
+        return ofertaActiva;
+    }
+
+    public void setOfertaActiva(boolean ofertaActiva) {
+        this.ofertaActiva = ofertaActiva;
+    }
+
+    public Oferta getOferta() {
+        return oferta;
+    }
+
+    public void setOferta(Oferta oferta) {
+        this.oferta = oferta;
+    }
+
+    public SubCategoria getSubCategoria() {
+        return subCategoria;
+    }
+
+    public void setSubCategoria(SubCategoria subCategoria) {
+        this.subCategoria = subCategoria;
     }
 }

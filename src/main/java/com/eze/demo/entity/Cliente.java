@@ -1,29 +1,84 @@
 package com.eze.demo.entity;
 
-import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.eze.demo.entity.DTOs.DTDireccion;
+import com.eze.demo.entity.Enums.EnumRoles;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 
 @Entity
-public class Cliente {
+public class Cliente extends Usuario {
+    private String uidCliente;
+    private String telefono;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @ElementCollection
+    private List<DTDireccion> direcciones = new ArrayList<>();
 
-    private String nombre;
-    private String email;
+    private boolean habilitado = true;
 
-    public Cliente() {}
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comentario> comentarios = new ArrayList<>();
 
-    public Cliente(String nombre, String email) {
-        this.nombre = nombre;
-        this.email = email;
+    protected Cliente() {
     }
 
-    public Long getId() { return id; }
-    public String getNombre() { return nombre; }
-    public String getEmail() { return email; }
+    public Cliente(String nombre, String email, String urlImagen, EnumRoles rol, String uidCliente,
+            String telefono, List<DTDireccion> direcciones) {
+        super(nombre, email, urlImagen, rol);
+        this.uidCliente = uidCliente;
+        this.telefono = telefono;
+        if (direcciones != null) {
+            this.direcciones = direcciones;
+        }
+    }
 
-    public void setId(Long id) { this.id = id; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-    public void setEmail(String email) { this.email = email; }
+    public List<Comentario> getComentarios() {
+        return comentarios;
+    }
+
+    public void addComentario(Comentario comentario) {
+        comentario.setCliente(this);
+        this.comentarios.add(comentario);
+    }
+
+    public void addDireccion(DTDireccion direccion) {
+        this.direcciones.add(direccion);
+    }
+
+    public String getUidCliente() {
+        return uidCliente;
+    }
+
+    public void setUidCliente(String uidCliente) {
+        this.uidCliente = uidCliente;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public List<DTDireccion> getDirecciones() {
+        return direcciones;
+    }
+
+    public void setDirecciones(List<DTDireccion> direcciones) {
+        this.direcciones = direcciones;
+    }
+
+    public boolean isHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(boolean habilitado) {
+        this.habilitado = habilitado;
+    }
 }

@@ -1,6 +1,6 @@
 package com.eze.demo.entity;
 
-public class OrdenResponse {
+public class MPResponse {
     private String orderid;
     private String init_point;
     private String sandbox_init_point;
@@ -29,7 +29,7 @@ public class OrdenResponse {
         return sandbox_init_point;
     }
 
-    public OrdenResponse(String orderid, String init_point, String sandbox_init_point) {
+    public MPResponse(String orderid, String init_point, String sandbox_init_point) {
         this.orderid = orderid;
         this.init_point = init_point;
         this.sandbox_init_point = sandbox_init_point;

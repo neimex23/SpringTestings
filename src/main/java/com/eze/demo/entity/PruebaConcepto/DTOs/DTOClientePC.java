@@ -1,11 +1,11 @@
-package com.eze.demo.entity.DTOs;
+package com.eze.demo.entity.PruebaConcepto.DTOs;
 
-public class DTOCliente {
+public class DTOClientePC {
 
     private String nombre;
     private String email;
     
-    public DTOCliente(String nombre, String email) {
+    public DTOClientePC(String nombre, String email) {
         this.nombre = nombre;
         this.email = email;
     }
