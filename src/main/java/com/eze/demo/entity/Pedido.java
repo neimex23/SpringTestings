@@ -180,4 +180,10 @@ public class Pedido {
     public void setRazonCancelacion(EnumRazonCancelacion razonCancelacion) {
         this.razonCancelacion = razonCancelacion;
     }
+
+    public float calcularTotal() {
+        return productos.stream()
+                .map(pp -> pp.getProducto().getPrecio() * pp.getCantidad())
+                .reduce(0f, Float::sum);
+    }
 }

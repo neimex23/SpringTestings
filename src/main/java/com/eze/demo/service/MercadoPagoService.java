@@ -1,14 +1,17 @@
 package com.eze.demo.service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.eze.demo.entity.MPResponse;
-import com.eze.demo.entity.PruebaConcepto.OrdenPC;
-import com.eze.demo.entity.PruebaConcepto.ProductoPC;
-import com.eze.demo.entity.PruebaConcepto.DTOs.DTOProductoPC;
+import com.eze.demo.entity.Pago;
+import com.eze.demo.entity.Pedido;
+import com.eze.demo.entity.Producto;
+
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
@@ -26,17 +29,17 @@ public class MercadoPagoService {
         this.ordenesService = ordenesService;
     }
 
-    public MPResponse crearOrden(List<DTOProductoPC> products) {
-          
-        List<PreferenceItemRequest> items = products.stream()
-            .map(dto -> PreferenceItemRequest.builder()
+    public MPResponse crearOrden(Pedido pedido) { //Generar  DTOPedido para frontend
+        pedido.setPago(new Pago(LocalDateTime.now(), pedido.calcularTotal(), null , null));
+        
+
+        List<PreferenceItemRequest> items = pedido.getProductos().stream()
+            .map(pp -> PreferenceItemRequest.builder()
                 .currencyId("UYU")
-                .title(dto.getDescription())  
-                .description(dto.getDescription())
-                .quantity(dto.getCantidad())
-                .unitPrice(dto.getPrecio())  
-                .pictureUrl(dto.getPictureUrl())
-                .categoryId(dto.getCategoryId())
+                .title(pp.getProducto().getNombre())
+                .description(pp.getProducto().getDescripcion())
+                .quantity(pp.getCantidad())
+                .unitPrice(BigDecimal.valueOf(pp.getProducto().getPrecio()))  
                 .build())
             .toList();
         
@@ -51,24 +54,14 @@ public class MercadoPagoService {
             .items(items)
             .notificationUrl("https://webhook.site/d843dc6e-6757-413c-adc0-36bdc5616d8d")
             //.backUrls(backUrls)
+            .externalReference(String.valueOf(pedido.getIdPedido()))
             .build();
 
         
         try {
             PreferenceClient client = new PreferenceClient();
             Preference preference = client.create(preferenceRequest);
-            
-            OrdenPC newOrden = new OrdenPC(
-                preference.getId(),
-                items.stream().map(item -> new ProductoPC(
-                    item.getTitle(),
-                    item.getUnitPrice(),
-                    item.getQuantity(),
-                    item.getPictureUrl(),
-                    item.getCategoryId()
-                )).toList()
-            );
-            ordenesService.guardar(newOrden);
+            ordenesService.guardar(pedido);
 
             return new MPResponse(
                 preference.getId(),
@@ -88,5 +81,7 @@ public class MercadoPagoService {
             );
         }
     }
+
+    //en elWebhook se debe procesar el pago con el idDepago, en el externalreference viene el idPedido, se busca el pedido, se actualiza su estado a pagado y se guarda el pago con el id de mp
     
 }

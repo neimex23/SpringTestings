@@ -1,14 +1,14 @@
 package com.eze.demo.controller;
 
-import com.eze.demo.entity.MPResponse;
-import com.eze.demo.entity.PruebaConcepto.DTOs.DTOProductoPC;
+import com.eze.demo.entity.DTOs.DTOOrden;
+import com.eze.demo.entity.DTOs.DTOProductoOrden;
 import com.eze.demo.service.MercadoPagoService;
+
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/ordenes")
@@ -21,21 +21,30 @@ public class OrdenController {
     }
 
     @PostMapping("/create-order")
-    public ResponseEntity<?> create(@RequestBody List<DTOProductoPC> products) {
-        if (products == null || products.isEmpty()) {
+    public ResponseEntity<?> create(@RequestBody DTOOrden orden) {
+        if (orden == null || orden.getProductos() == null || orden.getProductos().isEmpty()) {
             return ResponseEntity.badRequest().body("La lista de productos no puede estar vacía");
         }
 
-        if (products.stream().anyMatch(p -> p.getCantidad() <= 0 || p.getPrecio().compareTo(BigDecimal.ZERO) <= 0)) {
-            return ResponseEntity.badRequest().body("La cantidad y el precio de los productos deben ser mayores a cero");
+        List<DTOProductoOrden> productos = orden.getProductos();
+
+        boolean datosInvalidos = productos.stream().anyMatch(p ->
+                p.getCantidad() <= 0
+                        || p.getPrecio() == null
+                        || p.getPrecio().compareTo(BigDecimal.ZERO) <= 0
+        );
+
+        if (datosInvalidos) {
+            return ResponseEntity.badRequest()
+                    .body("La cantidad y el precio de los productos deben ser mayores a cero");
         }
 
         try {
-            return ResponseEntity.ok(mercadoPagoService.crearOrden(products));
+            // TODO: mapear DTOOrden -> Pedido y delegar a mercadoPagoService.crearOrden(pedido)
+            return ResponseEntity.ok(null);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
-                .body("Error al crear la orden: " + e.getMessage());
+                    .body("Error al crear la orden: " + e.getMessage());
         }
     }
-
 }

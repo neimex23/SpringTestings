@@ -1,7 +1,9 @@
 package com.eze.demo.controller;
 
-import com.eze.demo.entity.PruebaConcepto.ClientePC;
-import com.eze.demo.entity.PruebaConcepto.DTOs.DTOClientePC;
+import com.eze.demo.entity.Cliente;
+import com.eze.demo.entity.Enums.EnumRoles;
+import com.eze.demo.entity.DTOs.DTOCliente;
+import com.eze.demo.entity.DTOs.DTOClienteResponse;
 import com.eze.demo.service.ClienteService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +29,11 @@ public class ClienteController {
     }
 
     @GetMapping
-     @Operation(summary = "Listar Todos los Clientes")
-    public List<ClientePC> listar() {
-        return service.listar();
+    @Operation(summary = "Listar Todos los Clientes")
+    public List<DTOClienteResponse> listar() {
+        return service.listar().stream()
+                .map(DTOClienteResponse::desde)
+                .toList();
     }
 
     @PostMapping
@@ -38,13 +42,26 @@ public class ClienteController {
             @ApiResponse(responseCode = "201", description = "Cliente creado"),
             @ApiResponse(responseCode = "400", description = "Datos inválidos")
     })
-    public ResponseEntity<ClientePC> crear(@RequestBody DTOClientePC cliente) {
+    public ResponseEntity<DTOClienteResponse> crear(@RequestBody DTOCliente dto) {
+        if (dto.getNombre() == null || dto.getNombre().isBlank()
+                || dto.getEmail() == null || dto.getEmail().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Nombre y email son obligatorios");
+        }
 
-        ClientePC nuevo = service.guardar(new ClientePC(cliente.getNombre(),cliente.getEmail()));
+        Cliente nuevo = service.guardar(new Cliente(
+                dto.getNombre(),
+                dto.getEmail(),
+                dto.getUrlImagen(),
+                EnumRoles.Cliente,
+                dto.getUidCliente(),
+                dto.getTelefono(),
+                dto.getDirecciones()
+        ));
 
-        URI location = URI.create("/clientes/" + nuevo.getId());
+        URI location = URI.create("/clientes/" + nuevo.getIdUsuario());
 
-        return ResponseEntity.created(location).body(nuevo);
+        return ResponseEntity.created(location).body(DTOClienteResponse.desde(nuevo));
     }
 
     @GetMapping("/{id}")
@@ -53,18 +70,36 @@ public class ClienteController {
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente no existe")
     })
-    public ClientePC obtener(@PathVariable Long id) {
+    public DTOClienteResponse obtener(@PathVariable Integer id) {
+        Cliente cliente = service.obtener(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
+        return DTOClienteResponse.desde(cliente);
+    }
 
-        return service.obtener(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar Cliente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente actualizado"),
+            @ApiResponse(responseCode = "404", description = "Cliente no existe")
+    })
+    public DTOClienteResponse actualizar(@PathVariable Integer id, @RequestBody DTOCliente dto) {
+        Cliente datos = new Cliente(
+                dto.getNombre(),
+                dto.getEmail(),
+                dto.getUrlImagen(),
+                EnumRoles.Cliente,
+                dto.getUidCliente(),
+                dto.getTelefono(),
+                dto.getDirecciones()
+        );
+        return DTOClienteResponse.desde(service.actualizar(id, datos));
     }
 
     @DeleteMapping("/{id}")
-     @Operation(summary = "Eliminar Cliente por ID")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-
+    @Operation(summary = "Eliminar Cliente por ID")
+    public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         service.obtener(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
 
         service.eliminar(id);
 

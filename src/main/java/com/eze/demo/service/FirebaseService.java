@@ -2,7 +2,6 @@ package com.eze.demo.service;
 
 import org.springframework.stereotype.Service;
 
-import com.eze.demo.entity.PruebaConcepto.TestModelPC;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 
@@ -12,7 +11,7 @@ public class FirebaseService {
         Firestore db = FirestoreClient.getFirestore();
 
         db.collection("test")
-        .document("doc1")
-        .set(new TestModelPC("Hola Firebase"));
+        .document("doc1");
+        //.set(new TestModelPC("Hola Firebase"));
     }
 }
